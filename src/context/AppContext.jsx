@@ -23,7 +23,7 @@ export const AppContextProvider = (props) => {
         }
     } 
     catch(err){
-        toast.error(data.message);
+        toast.error(err?.response?.data?.message || 'Failed to check authentication status');
     }
   }
 
@@ -37,17 +37,17 @@ const getUserData = async () => {
 
     if (data.success) {
       setUserInfo(data.userData);
-      console.log("User data:", data.userData);
+      //console.log("User data:", data.userData);
     } 
     else {
       setUserInfo(null);
-      toast.error(data.message);
+      //toast.error(data.message);
     }
 
   } 
   catch (err) {
     setUserInfo(null);
-    toast.error(err.response?.data?.message || err.message);
+    toast.error(err?.response?.data?.message || 'Failed to fetch user data');
   }
 };
 
@@ -55,14 +55,14 @@ const getUserData = async () => {
 useEffect(() => {
 
   const initializeAuth = async () => {
+
     try {
 
       const { data } = await axios.get(
-        `${backendUrl}/api/auth/isAuthenticated`,
-        { withCredentials: true }
+        `${backendUrl}/api/auth/isAuthenticated`
       );
 
-      if (data.success) {
+      if (data?.success) {
         setIsLoggedIn(true);
         await getUserData();
       } 
@@ -72,11 +72,16 @@ useEffect(() => {
       }
 
     } 
-    catch (err) {
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      console.log(err);
-    }
+  catch (err) {
+  if (err.response?.status === 404) {
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    // optional: no toast here, since it's just "not logged in"
+  } else {
+    toast.error(err?.response?.data?.message || 'Failed to fetch user data');
+  }
+}
+
   };
 
   initializeAuth();

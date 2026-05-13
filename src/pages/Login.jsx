@@ -45,7 +45,8 @@ const Login = () => {
         else {
           // Handle Login logic here
           
-          const { data } = await axios.post(`${backendUrl}/api/auth/login`, {email, password});
+          const { data } = await axios.post(`${backendUrl}/api/auth/login`, {email, password}, {withCredentials: true});
+          console.log(data);
             
           if(data?.success){
             setIsLoggedIn(true);
@@ -59,7 +60,8 @@ const Login = () => {
 
       }}
       catch(err){
-        console.log(err); 
+        console.error(err);
+        toast.error(err?.response?.data?.message || 'An error occurred'); 
       }
       }
   return (
@@ -103,9 +105,9 @@ const Login = () => {
           </button>
         </form>
         {state === 'Sign Up' ?
-          <p className='mt-6 text-center text-sm text-gray-300'>Already have an account? <span onClick={() => setState('Login')} className='text-indigo-500 hover:text-white cursor-pointer'>Login</span></p>
+          <p className='cursor-pointer mt-6 text-center text-sm text-gray-300'>Already have an account? <span onClick={() => setState('Login')} className='text-indigo-500 hover:text-white cursor-pointer'>Login</span></p>
           :
-          <p className='mt-6 text-center text-sm text-gray-300'>Don't have an account? <span onClick={() => setState('Sign Up')} className='text-indigo-500 hover:text-white cursor-pointer'>Sign Up</span></p>
+          <p className='cursor-pointer mt-6 text-center text-sm text-gray-300'>Don't have an account? <span onClick={() => setState('Sign Up')} className='text-indigo-500 hover:text-white cursor-pointer'>Sign Up</span></p>
         }
       </div>
       
