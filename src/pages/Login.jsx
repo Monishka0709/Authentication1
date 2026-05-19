@@ -27,11 +27,11 @@ const Login = () => {
       
 
         if(state === 'Sign Up'){
-          // Handle Sign Up logic here
           const {data} = await axios.post(`${backendUrl}/api/auth/register`, {name, email, password});
 
           if(data?.success){
             setIsLoggedIn(true);
+            await getUserData();
             toast.success('Registration successful');
             navigate('/');
 
@@ -43,7 +43,6 @@ const Login = () => {
           console.log('Sign Up:', { name, email, password });
         } 
         else {
-          // Handle Login logic here
           
           const { data } = await axios.post(`${backendUrl}/api/auth/login`, {email, password}, {withCredentials: true});
           console.log(data);
